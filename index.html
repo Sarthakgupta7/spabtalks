@@ -1333,6 +1333,7 @@
 </body>
 </html> -->
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1780,50 +1781,6 @@
   .next-item .t{font-size:13px;font-weight:600;margin-bottom:2px}
   .next-item .s{font-size:12px;color:var(--ink-soft);line-height:1.45}
 
-  /* ============ SUB-GROUPS on success ============ */
-  .subgroups-section{margin-top:56px;text-align:left}
-  .subgroups-head{text-align:center;margin-bottom:28px}
-  .subgroups-head h3{
-    font-family:'Instrument Serif',serif;font-weight:400;
-    font-size:28px;letter-spacing:-.02em;margin-bottom:8px;
-  }
-  .subgroups-head h3 em{font-style:italic;color:var(--accent)}
-  .subgroups-head p{color:var(--ink-soft);font-size:14px;max-width:440px;margin:0 auto}
-  .subgroups-block{margin-bottom:24px}
-  .subgroups-label{
-    font-family:'JetBrains Mono',monospace;font-size:11px;
-    color:var(--ink-mute);letter-spacing:.05em;text-transform:uppercase;
-    margin-bottom:10px;display:flex;align-items:center;gap:8px;
-  }
-  .subgroups-label::after{content:"";flex:1;height:1px;background:var(--rule)}
-  .subgroups-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-  @media (max-width:560px){.subgroups-grid{grid-template-columns:1fr}}
-  .subgroup-card{
-    display:flex;align-items:center;gap:12px;padding:14px 16px;
-    background:var(--bg-card);border:1px solid var(--rule);border-radius:12px;
-    text-decoration:none;color:var(--ink);transition:all .2s ease;cursor:pointer;
-  }
-  .subgroup-card:hover{
-    border-color:var(--accent);background:var(--accent-soft);
-    transform:translateY(-1px);box-shadow:var(--shadow-sm);
-  }
-  .subgroup-card .sg-icon{
-    width:36px;height:36px;border-radius:10px;flex-shrink:0;
-    background:var(--accent-soft);color:var(--accent);
-    display:flex;align-items:center;justify-content:center;
-  }
-  .subgroup-card:hover .sg-icon{background:#fff}
-  .subgroup-card .sg-body{flex:1;min-width:0}
-  .subgroup-card .sg-t{font-size:14px;font-weight:600;margin-bottom:2px;display:flex;align-items:center;gap:6px}
-  .subgroup-card .sg-s{font-size:12px;color:var(--ink-soft);line-height:1.4}
-  .subgroup-card .sg-arrow{color:var(--ink-mute);flex-shrink:0;transition:transform .2s ease,color .2s ease}
-  .subgroup-card:hover .sg-arrow{color:var(--accent);transform:translateX(3px)}
-  .sg-recommended{
-    font-size:10px;padding:2px 7px;border-radius:5px;
-    background:var(--ok);color:#fff;font-weight:600;letter-spacing:.03em;
-    font-family:'JetBrains Mono',monospace;text-transform:uppercase;
-  }
-
   /* ============ FOOTER ============ */
   footer{
     border-top:1px solid var(--rule);
@@ -2069,7 +2026,6 @@
                   <option value="2nd Year">2nd Year</option>
                   <option value="3rd Year">3rd Year</option>
                   <option value="4th Year">4th Year</option>
-                  <option value="Graduated">Graduated</option>
                 </select>
                 <div class="err-msg">Select year</div>
               </div>
@@ -2143,7 +2099,7 @@
 
         <div class="nav-row">
           <button class="btn btn-ghost" onclick="goToStep(1)">← Back</button>
-          <button class="btn btn-primary" id="accept-btn" disabled onclick="submitAndJoin()">I agree — continue <span class="arr">→</span></button>
+          <button class="btn btn-primary" id="accept-btn" disabled onclick="submitAndJoin()">I agree<span class="arr">→</span></button>
         </div>
       </div>
     </section>
@@ -2171,72 +2127,11 @@
             </div>
           </div>
           <div class="next-item">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
             <div>
-              <div class="t">Pick your sub-groups below</div>
-              <div class="s">Request to join the ones most relevant to you.</div>
+              <div class="t">Join your <span id="year-group-name">year</span> group</div>
+              <div class="s">Inside the community, request to join the sub-group for your year.</div>
             </div>
-          </div>
-        </div>
-
-        <div class="subgroups-section">
-          <div class="subgroups-head">
-            <h3>Request access to your <em>sub-groups</em></h3>
-            <p>Each group runs focused activities. Tap to request — admins will approve and add you.</p>
-          </div>
-
-          <!-- Year group (auto-highlighted based on form data) -->
-          <div class="subgroups-block">
-            <div class="subgroups-label">Your year group</div>
-            <div class="subgroups-grid" id="year-group-grid">
-              <!-- injected by JS -->
-            </div>
-          </div>
-
-          <!-- Interest-based groups -->
-          <div class="subgroups-block">
-            <div class="subgroups-label">Interest-based groups</div>
-            <div class="subgroups-grid">
-              <a class="subgroup-card" href="#" data-group="coding">
-                <div class="sg-icon">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-                </div>
-                <div class="sg-body">
-                  <div class="sg-t">Coding challenges</div>
-                  <div class="sg-s">DSA, projects, weekly sprints</div>
-                </div>
-                <svg class="sg-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-              </a>
-              <a class="subgroup-card" href="#" data-group="communication">
-                <div class="sg-icon">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                </div>
-                <div class="sg-body">
-                  <div class="sg-t">Communication practice</div>
-                  <div class="sg-s">English, mock interviews, pitches</div>
-                </div>
-                <svg class="sg-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-              </a>
-              <a class="subgroup-card" href="#" data-group="podcasts">
-                <div class="sg-icon">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-                </div>
-                <div class="sg-body">
-                  <div class="sg-t">Podcasts &amp; talks</div>
-                  <div class="sg-s">Industry guests, live sessions</div>
-                </div>
-                <svg class="sg-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-              </a>
-              <a class="subgroup-card" href="#" data-group="placements">
-                <div class="sg-icon">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-                </div>
-                <div class="sg-body">
-                  <div class="sg-t">Placements &amp; referrals</div>
-                  <div class="sg-s">Internship &amp; job leads</div>
-                </div>
-                <svg class="sg-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-              </a>
             </div>
           </div>
         </div>
@@ -2251,16 +2146,14 @@
 
 <footer>
   <div>ABtalks · Where students meet industry</div>
+  <div>Made with ❤️ in Ghaziabad</div>
   <div>© 2026 · <a href="#">Privacy</a> · <a href="#">Contact</a></div>
 </footer>
 
 <script>
   const CONFIG = {
     GOOGLE_SHEET_WEBHOOK: "https://script.google.com/macros/s/AKfycbyzCBBOzWr0RGYJYmGIqL1tT3qQpQWD_ozHpigASdiKE5Az_jeizzgopnlmZZjvHaiC/exec",
-    WHATSAPP_LINK: "https://chat.whatsapp.com/LA5CQJbMczH3QGhSyJDPGK",
-    // Admin WhatsApp number for sub-group requests (include country code, no + or spaces)
-    // e.g. "919876543210"  →  user clicks sub-group and opens wa.me/919876543210 with a pre-filled message
-    ADMIN_WHATSAPP: "918445201080"
+    WHATSAPP_LINK: "https://chat.whatsapp.com/LA5CQJbMczH3QGhSyJDPGK"
   };
 
   // scroll-aware nav border
@@ -2372,65 +2265,7 @@
       } catch(err) { console.warn("Sheet submit failed:", err); }
     }
     document.getElementById('whatsapp-link').href = CONFIG.WHATSAPP_LINK;
-    renderSubgroups();
     goToStep(3);
-  }
-
-  /* ============ SUB-GROUP REQUEST LOGIC ============ */
-  const GROUP_LABELS = {
-    coding:        { t: 'Coding challenges',         s: 'DSA, projects, weekly sprints' },
-    communication: { t: 'Communication practice',    s: 'English, mock interviews, pitches' },
-    podcasts:      { t: 'Podcasts & talks',          s: 'Industry guests, live sessions' },
-    placements:    { t: 'Placements & referrals',    s: 'Internship & job leads' }
-  };
-
-  // Renders the user's year-specific group card with a "Recommended" badge
-  function renderSubgroups(){
-    const yr = formData.year || '';
-    const grid = document.getElementById('year-group-grid');
-    if (!grid) return;
-
-    let yearKey, label, sub;
-    if (yr === '1st Year')       { yearKey = '1st-year';  label = '1st Year Cohort';  sub = 'Foundations, language basics, peer intros'; }
-    else if (yr === '2nd Year')  { yearKey = '2nd-year';  label = '2nd Year Cohort';  sub = 'DSA, first real projects, early internships'; }
-    else if (yr === '3rd Year')  { yearKey = '3rd-year';  label = '3rd Year Cohort';  sub = 'Internship prep, resume reviews, interviews'; }
-    else if (yr === '4th Year')  { yearKey = '4th-year';  label = '4th Year Cohort';  sub = 'Placements, negotiations, final projects'; }
-    else if (yr === 'Graduated') { yearKey = 'alumni';    label = 'Alumni Circle';     sub = 'Mentorship, referrals, community leadership'; }
-    else                         { yearKey = 'general';   label = 'General Members';   sub = 'All years welcome'; }
-
-    grid.innerHTML = `
-      <a class="subgroup-card" href="#" data-group="${yearKey}">
-        <div class="sg-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <div class="sg-body">
-          <div class="sg-t">${label} <span class="sg-recommended">Recommended</span></div>
-          <div class="sg-s">${sub}</div>
-        </div>
-        <svg class="sg-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </a>
-    `;
-
-    // Hook up all subgroup cards
-    GROUP_LABELS[yearKey] = { t: label, s: sub };
-    document.querySelectorAll('.subgroup-card').forEach(card => {
-      card.addEventListener('click', (e) => {
-        e.preventDefault();
-        const key = card.dataset.group;
-        const groupName = GROUP_LABELS[key] ? GROUP_LABELS[key].t : key;
-        const msg =
-`Hi admin, I'd like to request access to the *${groupName}* sub-group.
-
-Name: ${formData.name}
-College: ${formData.college}
-Year: ${formData.year}
-Branch: ${formData.branch}
-
-Thanks!`;
-        const url = `https://wa.me/${CONFIG.ADMIN_WHATSAPP}?text=${encodeURIComponent(msg)}`;
-        window.open(url, '_blank');
-      });
-    });
   }
 </script>
 </body>
