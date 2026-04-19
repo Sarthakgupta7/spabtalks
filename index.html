@@ -1332,7 +1332,6 @@
 </script>
 </body>
 </html> -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1693,13 +1692,36 @@
   }
   .rule:last-child{border-bottom:none}
   .rule:hover{background:#fdfdfa}
-  .rule-num{
-    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-mute);
-    flex-shrink:0;margin-top:3px;min-width:24px;
+  .rule-icon{
+    width:36px;height:36px;border-radius:10px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    margin-top:2px;
   }
-  .rule-body h4{font-size:15px;font-weight:600;margin-bottom:4px;color:var(--ink)}
+  .rule-icon.check{background:rgba(14,138,74,.1);color:var(--ok)}
+  .rule-icon.warn{background:#fef3e0;color:#b45309;border:1px solid #fcd9a8}
+  .rule-icon.warn.strict{background:#fdecec;color:#b91c1c;border:1px solid #f4c4c4}
+  .rule-body h4{font-size:15px;font-weight:600;margin-bottom:4px;color:var(--ink);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .rule-body .tag{
+    display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;
+    font-size:10px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .rule-body .tag.warn{background:#fef3e0;color:#b45309}
+  .rule-body .tag.strict{background:#fdecec;color:#b91c1c}
   .rule-body p{font-size:14px;color:var(--ink-soft);line-height:1.55}
   .rule-body b{color:var(--ink);font-weight:500}
+
+  /* phone with country code */
+  .phone-group{display:flex;gap:8px}
+  .phone-group select{
+    width:auto;min-width:110px;max-width:130px;flex-shrink:0;
+    padding:12px 32px 12px 12px;font-size:14px;
+    background:#fdfdfa url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'><path d='M1 1l4 4 4-4' stroke='%234a4e57' stroke-width='1.5' stroke-linecap='round'/></svg>") no-repeat right 10px center;
+    appearance:none;border:1px solid var(--rule);border-radius:10px;
+    color:var(--ink);cursor:pointer;transition:all .2s ease;outline:none;
+  }
+  .phone-group select:focus{border-color:var(--accent);background-color:#fff;box-shadow:0 0 0 3px rgba(79,70,229,.12)}
+  .phone-group input{flex:1;min-width:0}
 
   .consent{
     margin:28px 0;padding:16px 18px;background:var(--accent-soft);
@@ -1809,7 +1831,7 @@
 
       <h1 class="display">A community for students<br>who are <em>serious</em> about<br>their career.</h1>
 
-      <p class="lede">ABtalks connects <b>B.Tech and BCA students</b> with professionals shaping India's tech industry — through podcasts, coding challenges, and direct access to mentors.</p>
+      <p class="lede">ABtalks connects <b>undergraduate tech students</b> — B.Tech, BCA, and equivalent programs worldwide — with professionals shaping the industry through podcasts, coding challenges, and direct access to mentors.</p>
 
       <div class="hero-cta">
         <button class="btn btn-primary" onclick="startApplication()">Join the community <span class="arr">→</span></button>
@@ -1963,8 +1985,30 @@
             </div>
             <div class="field">
               <label for="phone">WhatsApp number</label>
-              <input type="tel" id="phone" placeholder="10-digit mobile" required>
-              <div class="err-msg">Please enter a valid 10-digit number</div>
+              <div class="phone-group">
+                <select id="country-code" aria-label="Country code">
+                  <option value="+91" data-min="10" data-max="10" selected>🇮🇳 +91</option>
+                  <option value="+1" data-min="10" data-max="10">🇺🇸 +1</option>
+                  <option value="+44" data-min="10" data-max="10">🇬🇧 +44</option>
+                  <option value="+971" data-min="8" data-max="9">🇦🇪 +971</option>
+                  <option value="+65" data-min="8" data-max="8">🇸🇬 +65</option>
+                  <option value="+61" data-min="9" data-max="9">🇦🇺 +61</option>
+                  <option value="+49" data-min="10" data-max="11">🇩🇪 +49</option>
+                  <option value="+33" data-min="9" data-max="9">🇫🇷 +33</option>
+                  <option value="+81" data-min="10" data-max="10">🇯🇵 +81</option>
+                  <option value="+86" data-min="11" data-max="11">🇨🇳 +86</option>
+                  <option value="+880" data-min="10" data-max="10">🇧🇩 +880</option>
+                  <option value="+977" data-min="10" data-max="10">🇳🇵 +977</option>
+                  <option value="+92" data-min="10" data-max="10">🇵🇰 +92</option>
+                  <option value="+94" data-min="9" data-max="9">🇱🇰 +94</option>
+                  <option value="+60" data-min="9" data-max="10">🇲🇾 +60</option>
+                  <option value="+966" data-min="9" data-max="9">🇸🇦 +966</option>
+                  <option value="+27" data-min="9" data-max="9">🇿🇦 +27</option>
+                  <option value="+other" data-min="6" data-max="15">🌍 Other</option>
+                </select>
+                <input type="tel" id="phone" placeholder="Mobile number" required>
+              </div>
+              <div class="err-msg">Please enter a valid WhatsApp number</div>
             </div>
             <div class="field">
               <label for="college">College / University</label>
@@ -2018,23 +2062,29 @@
 
         <div class="rules-list">
           <div class="rule">
-            <span class="rule-num">01</span>
+            <div class="rule-icon check">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
             <div class="rule-body">
               <h4>Engage consistently</h4>
               <p>Show up to discussions, podcasts, and challenges. <b>Members who stay active</b> unlock mentorship, referrals, and placement support.</p>
             </div>
           </div>
           <div class="rule">
-            <span class="rule-num">02</span>
+            <div class="rule-icon warn strict">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
             <div class="rule-body">
-              <h4>No spam or self-promotion</h4>
+              <h4>No spam or self-promotion <span class="tag strict">Strict</span></h4>
               <p>Irrelevant messages, course promotions, or unsolicited outreach result in an <b>immediate and permanent ban</b> from the community.</p>
             </div>
           </div>
           <div class="rule">
-            <span class="rule-num">03</span>
+            <div class="rule-icon warn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
             <div class="rule-body">
-              <h4>Respect privacy</h4>
+              <h4>Respect privacy <span class="tag warn">Enforced</span></h4>
               <p>Direct messages to members or mentors require <b>explicit admin consent</b>. This protects everyone's time and keeps the space professional.</p>
             </div>
           </div>
@@ -2146,10 +2196,12 @@
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     if (validateForm()) {
+      const cc = document.getElementById('country-code').value;
+      const rawPhone = document.getElementById('phone').value.trim().replace(/\s|-/g,'');
       formData = {
         name: document.getElementById('name').value.trim(),
         email: document.getElementById('email').value.trim(),
-        phone: document.getElementById('phone').value.trim(),
+        phone: cc + rawPhone,
         college: document.getElementById('college').value.trim(),
         year: document.getElementById('year').value,
         branch: document.getElementById('branch').value,
@@ -2167,7 +2219,14 @@
       const val = el.value.trim();
       let ok = val.length > 0;
       if (id === 'email') ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
-      if (id === 'phone') ok = /^[6-9]\d{9}$/.test(val.replace(/\s|-/g,''));
+      if (id === 'phone'){
+        const digits = val.replace(/\s|-|\(|\)/g,'');
+        const ccSel = document.getElementById('country-code');
+        const selected = ccSel.options[ccSel.selectedIndex];
+        const min = parseInt(selected.dataset.min, 10);
+        const max = parseInt(selected.dataset.max, 10);
+        ok = /^\d+$/.test(digits) && digits.length >= min && digits.length <= max;
+      }
       if (!ok){ wrap.classList.add('show-err'); el.classList.add('error'); valid = false; }
     });
     return valid;
@@ -2177,6 +2236,12 @@
       el.classList.remove('error');
       el.closest('.field').classList.remove('show-err');
     });
+  });
+  // re-validate phone visual state when country changes
+  document.getElementById('country-code').addEventListener('change', () => {
+    const phoneField = document.getElementById('phone').closest('.field');
+    phoneField.classList.remove('show-err');
+    document.getElementById('phone').classList.remove('error');
   });
 
   const accept = document.getElementById('accept');
