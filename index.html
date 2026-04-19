@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ABtalks — Where Students Meet Industry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#06050c;
+    --bg-1:#0d0a1f;
+    --ink:#f5f1ea;
+    --ink-dim:rgba(245,241,234,.62);
+    --ink-faint:rgba(245,241,234,.28);
+    --accent-lime:#d6ff3c;
+    --accent-magenta:#ff3db8;
+    --accent-violet:#7b5cff;
+    --accent-orange:#ff7a1a;
+    --card:rgba(255,255,255,.04);
+    --card-border:rgba(255,255,255,.08);
+    --error:#ff6b6b;
+    --radius:18px;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+
+  html,body{background:var(--bg-0);color:var(--ink);font-family:'Space Grotesk',sans-serif;min-height:100vh;overflow-x:hidden}
+
+  body{
+    background:
+      radial-gradient(1200px 800px at 85% -10%, rgba(123,92,255,.35), transparent 60%),
+      radial-gradient(900px 700px at -10% 110%, rgba(255,61,184,.28), transparent 55%),
+      radial-gradient(600px 500px at 50% 50%, rgba(214,255,60,.06), transparent 70%),
+      var(--bg-0);
+    position:relative;
+  }
+
+  /* grain */
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.04 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    pointer-events:none;z-index:1;opacity:.5;
+  }
+
+  .app{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column}
+
+  /* nav */
+  nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px 32px;
+  }
+  .logo{
+    font-family:'Fraunces',serif;font-weight:600;font-size:22px;letter-spacing:-.02em;
+    display:flex;align-items:center;gap:10px;
+  }
+  .logo .dot{width:10px;height:10px;border-radius:50%;background:var(--accent-lime);box-shadow:0 0 18px var(--accent-lime)}
+  .nav-right{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--ink-dim);display:flex;gap:20px;align-items:center}
+  .live-dot{width:6px;height:6px;border-radius:50%;background:var(--accent-magenta);box-shadow:0 0 10px var(--accent-magenta);animation:pulse 1.4s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+  /* progress */
+  .progress{
+    max-width:1100px;margin:0 auto;width:100%;padding:0 32px;
+    display:flex;gap:14px;align-items:center;margin-top:8px;margin-bottom:30px;
+  }
+  .step-pill{
+    flex:1;display:flex;flex-direction:column;gap:6px;
+    font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);
+    transition:color .4s ease;
+  }
+  .step-pill .bar{
+    height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;position:relative;
+  }
+  .step-pill .bar::after{
+    content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--accent-lime),var(--accent-magenta));
+    transform:scaleX(0);transform-origin:left;transition:transform .7s cubic-bezier(.2,.8,.2,1);
+  }
+  .step-pill.active{color:var(--ink)}
+  .step-pill.active .bar::after{transform:scaleX(1)}
+  .step-pill.done .bar::after{transform:scaleX(1);background:var(--accent-lime)}
+
+  /* page area */
+  main{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:10px 32px 60px}
+  .page{width:100%;max-width:1100px;display:none;animation:fadeUp .6s cubic-bezier(.2,.8,.2,1)}
+  .page.active{display:block}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ---------------- page 1 ---------------- */
+  .hero-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center}
+  @media (max-width:900px){.hero-wrap{grid-template-columns:1fr;gap:40px}}
+
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.25em;text-transform:uppercase;
+    color:var(--accent-lime);display:inline-flex;align-items:center;gap:10px;margin-bottom:24px;
+    padding:8px 14px;border:1px solid rgba(214,255,60,.25);border-radius:100px;background:rgba(214,255,60,.04);
+  }
+  .eyebrow::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent-lime);box-shadow:0 0 10px var(--accent-lime)}
+
+  h1{
+    font-family:'Fraunces',serif;font-weight:400;font-size:clamp(44px,7vw,88px);
+    line-height:.95;letter-spacing:-.03em;margin-bottom:24px;
+  }
+  h1 .italic{font-style:italic;background:linear-gradient(135deg,var(--accent-magenta),var(--accent-orange));-webkit-background-clip:text;background-clip:text;color:transparent}
+  h1 .amp{font-style:italic;color:var(--accent-lime)}
+
+  .hero-sub{font-size:18px;line-height:1.5;color:var(--ink-dim);max-width:500px;margin-bottom:36px}
+
+  .stats{display:flex;gap:32px;flex-wrap:wrap}
+  .stat{display:flex;flex-direction:column;gap:4px}
+  .stat b{font-family:'Fraunces',serif;font-size:32px;font-weight:500;letter-spacing:-.02em}
+  .stat span{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.15em;color:var(--ink-faint)}
+
+  /* form card */
+  .card{
+    background:var(--card);
+    border:1px solid var(--card-border);
+    border-radius:var(--radius);
+    padding:36px;
+    backdrop-filter:blur(20px);
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);
+  }
+
+  .card-label{
+    font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.2em;
+    color:var(--accent-lime);margin-bottom:8px;
+  }
+  .card h2{
+    font-family:'Fraunces',serif;font-weight:400;font-size:28px;letter-spacing:-.02em;margin-bottom:28px;
+  }
+
+  .field{margin-bottom:18px;position:relative}
+  .field label{
+    display:block;font-size:11px;font-family:'JetBrains Mono',monospace;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px;
+  }
+  .field input,.field select{
+    width:100%;padding:14px 16px;font-size:15px;font-family:'Space Grotesk',sans-serif;
+    background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);border-radius:12px;
+    color:var(--ink);transition:all .25s ease;outline:none;
+  }
+  .field input:focus,.field select:focus{
+    border-color:var(--accent-lime);background:rgba(214,255,60,.04);
+    box-shadow:0 0 0 3px rgba(214,255,60,.1);
+  }
+  .field input.error,.field select.error{border-color:var(--error);background:rgba(255,107,107,.05)}
+  .field .err-msg{
+    display:none;color:var(--error);font-size:12px;margin-top:6px;font-family:'JetBrains Mono',monospace;
+  }
+  .field.show-err .err-msg{display:block}
+  .field select{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7' fill='none'><path d='M1 1l5 5 5-5' stroke='%23d6ff3c' stroke-width='1.5' stroke-linecap='round'/></svg>");background-repeat:no-repeat;background-position:right 16px center;padding-right:42px}
+  .field select option{background:var(--bg-1);color:var(--ink)}
+
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media (max-width:520px){.row{grid-template-columns:1fr}}
+
+  /* buttons */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:10px;
+    padding:16px 28px;border:none;border-radius:100px;cursor:pointer;
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;
+    transition:all .3s ease;position:relative;overflow:hidden;
+  }
+  .btn-primary{
+    background:var(--accent-lime);color:#06050c;width:100%;
+    box-shadow:0 10px 40px rgba(214,255,60,.25);
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 15px 50px rgba(214,255,60,.4)}
+  .btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
+  .btn-primary .arrow{transition:transform .3s ease}
+  .btn-primary:hover .arrow{transform:translateX(4px)}
+  .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--ink)}
+  .btn-ghost:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.3)}
+
+  /* ---------------- page 2 (rules) ---------------- */
+  .rules-wrap{max-width:780px;margin:0 auto}
+  .rules-header{text-align:center;margin-bottom:48px}
+  .rules-header .eyebrow{margin-bottom:20px}
+  .rules-header h2{
+    font-family:'Fraunces',serif;font-weight:400;font-size:clamp(36px,5vw,56px);
+    line-height:1;letter-spacing:-.03em;margin-bottom:16px;
+  }
+  .rules-header h2 em{font-style:italic;color:var(--accent-lime)}
+  .rules-header p{color:var(--ink-dim);font-size:16px;line-height:1.6;max-width:520px;margin:0 auto}
+
+  .rule-block{
+    background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);
+    padding:28px 32px;margin-bottom:16px;display:flex;gap:20px;align-items:flex-start;
+    transition:transform .3s ease,border-color .3s ease;
+  }
+  .rule-block:hover{transform:translateX(6px);border-color:rgba(255,255,255,.18)}
+  .rule-icon{
+    width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;font-size:22px;
+  }
+  .rule-icon.lime{background:rgba(214,255,60,.1);border:1px solid rgba(214,255,60,.3)}
+  .rule-icon.magenta{background:rgba(255,61,184,.1);border:1px solid rgba(255,61,184,.3)}
+  .rule-icon.orange{background:rgba(255,122,26,.1);border:1px solid rgba(255,122,26,.3)}
+  .rule-icon.violet{background:rgba(123,92,255,.12);border:1px solid rgba(123,92,255,.35)}
+  .rule-content h3{font-family:'Fraunces',serif;font-weight:500;font-size:20px;letter-spacing:-.01em;margin-bottom:6px}
+  .rule-content p{color:var(--ink-dim);font-size:14px;line-height:1.55}
+
+  .consent{
+    margin:36px 0 28px;padding:22px;
+    background:rgba(214,255,60,.04);border:1px dashed rgba(214,255,60,.3);border-radius:14px;
+    display:flex;gap:14px;align-items:flex-start;cursor:pointer;
+  }
+  .consent input{
+    appearance:none;width:22px;height:22px;border:2px solid rgba(214,255,60,.5);border-radius:6px;
+    cursor:pointer;flex-shrink:0;margin-top:2px;position:relative;transition:all .2s ease;
+  }
+  .consent input:checked{background:var(--accent-lime);border-color:var(--accent-lime)}
+  .consent input:checked::after{
+    content:"✓";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    color:#06050c;font-weight:900;font-size:14px;
+  }
+  .consent label{font-size:14px;line-height:1.5;color:var(--ink);cursor:pointer}
+  .consent label b{color:var(--accent-lime);font-weight:600}
+
+  .nav-row{display:flex;gap:14px;justify-content:space-between;align-items:center}
+  .nav-row .btn-primary{width:auto;padding:16px 36px}
+
+  /* ---------------- page 3 (join) ---------------- */
+  .join-wrap{max-width:720px;margin:0 auto;text-align:center}
+  .success-badge{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:10px 18px;background:rgba(214,255,60,.1);border:1px solid rgba(214,255,60,.3);
+    border-radius:100px;margin-bottom:32px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--accent-lime);
+  }
+  .success-badge .check{
+    width:18px;height:18px;border-radius:50%;background:var(--accent-lime);
+    display:flex;align-items:center;justify-content:center;color:#06050c;font-weight:900;font-size:11px;
+  }
+
+  .join-title{
+    font-family:'Fraunces',serif;font-weight:400;font-size:clamp(40px,6vw,68px);
+    line-height:1;letter-spacing:-.03em;margin-bottom:20px;
+  }
+  .join-title em{font-style:italic;background:linear-gradient(135deg,var(--accent-lime),var(--accent-magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+  .join-sub{color:var(--ink-dim);font-size:17px;line-height:1.55;max-width:540px;margin:0 auto 36px}
+
+  .whatsapp-btn{
+    display:inline-flex;align-items:center;gap:14px;
+    background:#25D366;color:#0a1f12;
+    padding:20px 40px;border-radius:100px;text-decoration:none;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;
+    box-shadow:0 20px 60px rgba(37,211,102,.3);
+    transition:transform .3s ease,box-shadow .3s ease;
+  }
+  .whatsapp-btn:hover{transform:translateY(-3px);box-shadow:0 25px 70px rgba(37,211,102,.45)}
+  .whatsapp-btn svg{width:24px;height:24px}
+
+  .delivery-info{
+    margin-top:40px;padding:24px;background:var(--card);border:1px solid var(--card-border);
+    border-radius:var(--radius);display:grid;grid-template-columns:1fr 1fr;gap:20px;text-align:left;
+  }
+  @media (max-width:560px){.delivery-info{grid-template-columns:1fr}}
+  .delivery-item{display:flex;gap:14px;align-items:flex-start}
+  .delivery-item .icon{
+    width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;
+    font-size:16px;flex-shrink:0;
+  }
+  .delivery-item .t{font-size:13px;font-weight:600;margin-bottom:3px}
+  .delivery-item .s{font-size:12px;color:var(--ink-dim);line-height:1.4}
+
+  footer{
+    padding:28px 32px;text-align:center;
+    font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--ink-faint);border-top:1px solid rgba(255,255,255,.04);
+  }
+  footer span{color:var(--accent-lime)}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo">
+      <span class="dot"></span>
+      <span>AB<em style="font-style:italic">talks</em></span>
+    </div>
+    <div class="nav-right">
+      <span class="live-dot"></span>
+      <span>Cohort Open · 60-Day Sprint</span>
+    </div>
+  </nav>
+
+  <!-- PROGRESS -->
+  <div class="progress">
+    <div class="step-pill active" data-step="1">
+      <div>01 — Your Details</div>
+      <div class="bar"></div>
+    </div>
+    <div class="step-pill" data-step="2">
+      <div>02 — The Commitment</div>
+      <div class="bar"></div>
+    </div>
+    <div class="step-pill" data-step="3">
+      <div>03 — Join the Community</div>
+      <div class="bar"></div>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- ========== PAGE 1 ========== -->
+    <section class="page active" id="page-1">
+      <div class="hero-wrap">
+        <div>
+          <div class="eyebrow">Where students meet industry</div>
+          <h1>Stop scrolling.<br>Start <span class="italic">shipping</span> <span class="amp">&</span><br>showing up.</h1>
+          <p class="hero-sub">ABtalks bridges the gap between students and the industry — real conversations, direct access to professionals, and a community that holds you accountable.</p>
+          <div class="stats">
+            <div class="stat"><b>60</b><span>Days of consistency</span></div>
+            <div class="stat"><b>9+</b><span>Active cohort groups</span></div>
+            <div class="stat"><b>1:1</b><span>Mentor access</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">→ Apply to join</div>
+          <h2>Tell us about yourself.</h2>
+
+          <form id="registration-form" novalidate>
+            <div class="field">
+              <label for="name">Full Name</label>
+              <input type="text" id="name" name="name" placeholder="e.g. Aditya Sharma" required>
+              <div class="err-msg">Please enter your full name</div>
+            </div>
+
+            <div class="field">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" placeholder="you@college.edu" required>
+              <div class="err-msg">Please enter a valid email</div>
+            </div>
+
+            <div class="field">
+              <label for="phone">WhatsApp Number</label>
+              <input type="tel" id="phone" name="phone" placeholder="10-digit mobile number" required>
+              <div class="err-msg">Please enter a valid 10-digit number</div>
+            </div>
+
+            <div class="field">
+              <label for="college">College / University</label>
+              <input type="text" id="college" name="college" placeholder="e.g. IIT Delhi" required>
+              <div class="err-msg">College name is required</div>
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label for="year">Year</label>
+                <select id="year" name="year" required>
+                  <option value="">Select year</option>
+                  <option value="1st Year">1st Year</option>
+                  <option value="2nd Year">2nd Year</option>
+                  <option value="3rd Year">3rd Year</option>
+                  <option value="4th Year">4th Year</option>
+                </select>
+                <div class="err-msg">Select your year</div>
+              </div>
+
+              <div class="field">
+                <label for="branch">Branch</label>
+                <select id="branch" name="branch" required>
+                  <option value="">Select branch</option>
+                  <option value="B.Tech CSE">B.Tech CSE</option>
+                  <option value="B.Tech IT">B.Tech IT</option>
+                  <option value="B.Tech ECE">B.Tech ECE</option>
+                  <option value="B.Tech EEE">B.Tech EEE</option>
+                  <option value="B.Tech Mechanical">B.Tech Mechanical</option>
+                  <option value="B.Tech Civil">B.Tech Civil</option>
+                  <option value="BCA">BCA</option>
+                  <option value="MCA">MCA</option>
+                  <option value="Other">Other</option>
+                </select>
+                <div class="err-msg">Select your branch</div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="margin-top:10px">
+              Continue <span class="arrow">→</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== PAGE 2 ========== -->
+    <section class="page" id="page-2">
+      <div class="rules-wrap">
+        <div class="rules-header">
+          <div class="eyebrow">The fine print (but real)</div>
+          <h2>You don't need experience.<br>You just need to <em>commit.</em></h2>
+          <p>Show up. Engage. Learn. Opportunities — internships, mentorships, projects, referrals — go to the ones who stay consistent.</p>
+        </div>
+
+        <div class="rule-block">
+          <div class="rule-icon lime">⚡</div>
+          <div class="rule-content">
+            <h3>60 Days of Consistency</h3>
+            <p>Engage daily in discussions, challenges, and podcasts. Consistent members unlock exclusive internship and project referrals.</p>
+          </div>
+        </div>
+
+        <div class="rule-block">
+          <div class="rule-icon orange">⚠️</div>
+          <div class="rule-content">
+            <h3>No Spam. No Irrelevant Messages.</h3>
+            <p>Irrelevant messages and spamming result in an <b>immediate ban</b> from the group and the ABtalks platform. Zero tolerance.</p>
+          </div>
+        </div>
+
+        <div class="rule-block">
+          <div class="rule-icon magenta">🔒</div>
+          <div class="rule-content">
+            <h3>Privacy &amp; Respect</h3>
+            <p>Messaging anyone privately is only allowed with explicit consent of the community admin. Respect the space. Protect the community.</p>
+          </div>
+        </div>
+
+        <div class="rule-block">
+          <div class="rule-icon violet">🎙️</div>
+          <div class="rule-content">
+            <h3>Show Up to Grow Up</h3>
+            <p>Weekly podcasts with industry leaders, coding challenges across all years, and communication practice sessions. Your attendance is your currency.</p>
+          </div>
+        </div>
+
+        <label class="consent" for="accept">
+          <input type="checkbox" id="accept">
+          <span>I understand that <b>consistency is the deal</b>. I'll show up, engage respectfully, and follow community rules. I accept that spamming or rule violations lead to permanent ban.</span>
+        </label>
+
+        <div class="nav-row">
+          <button class="btn btn-ghost" onclick="goToStep(1)">← Back</button>
+          <button class="btn btn-primary" id="accept-btn" disabled onclick="submitAndJoin()">
+            I'm in — continue <span class="arrow">→</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== PAGE 3 ========== -->
+    <section class="page" id="page-3">
+      <div class="join-wrap">
+        <div class="success-badge">
+          <span class="check">✓</span>
+          <span>You're verified · Cohort slot reserved</span>
+        </div>
+
+        <h2 class="join-title">Welcome to the<br><em>inner circle.</em></h2>
+        <p class="join-sub">One click away from mentors, podcasts, coding sprints, and referrals. Your 60-day journey starts the moment you hit join.</p>
+
+        <a href="#" class="whatsapp-btn" id="whatsapp-link" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.498 14.382c-.301-.15-1.767-.867-2.04-.966-.273-.101-.473-.15-.673.15-.197.295-.771.964-.944 1.162-.175.195-.349.21-.646.075-.3-.15-1.263-.465-2.403-1.485-.888-.795-1.484-1.77-1.66-2.07-.174-.3-.019-.465.13-.615.136-.135.301-.345.451-.523.146-.181.194-.301.297-.496.1-.21.049-.375-.025-.524-.075-.15-.672-1.62-.922-2.206-.24-.584-.487-.51-.672-.51-.172-.015-.371-.015-.571-.015-.2 0-.523.074-.797.359-.273.3-1.045 1.02-1.045 2.475s1.07 2.865 1.219 3.075c.149.195 2.105 3.195 5.1 4.485.714.3 1.27.48 1.704.629.714.227 1.365.195 1.88.121.574-.091 1.767-.721 2.016-1.426.255-.705.255-1.29.18-1.425-.074-.135-.27-.21-.57-.345m-5.446 7.443h-.016c-1.77 0-3.524-.48-5.055-1.38l-.36-.214-3.75.975 1.005-3.645-.239-.375c-.99-1.576-1.516-3.391-1.516-5.26 0-5.445 4.455-9.885 9.942-9.885 2.654 0 5.145 1.035 7.021 2.91 1.875 1.859 2.909 4.35 2.909 6.99-.004 5.444-4.46 9.885-9.935 9.885M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .104 5.334.101 11.893c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652c1.746.943 3.71 1.444 5.71 1.447h.006c6.585 0 11.946-5.336 11.949-11.896 0-3.176-1.24-6.165-3.495-8.411"/></svg>
+          Join WhatsApp Community
+        </a>
+
+        <div class="delivery-info">
+          <div class="delivery-item">
+            <div class="icon">📧</div>
+            <div>
+              <div class="t">Welcome email sent</div>
+              <div class="s">Check your inbox for cohort details & next steps</div>
+            </div>
+          </div>
+          <div class="delivery-item">
+            <div class="icon">💬</div>
+            <div>
+              <div class="t">Intro message in WhatsApp</div>
+              <div class="s">You'll see a pinned welcome note in the group</div>
+            </div>
+          </div>
+        </div>
+
+        <p style="margin-top:28px;font-size:12px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;letter-spacing:.1em">
+          Didn't receive anything? Email <span style="color:var(--accent-lime)">help@abtalks.in</span>
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <span>⬤</span> ABtalks · Respect the space. Protect the community. · <span>2026</span>
+  </footer>
+</div>
+
+<script>
+  /* =========================================================
+     CONFIG — EDIT THESE 2 THINGS ONLY
+     ========================================================= */
+  const CONFIG = {
+    // Paste your Google Apps Script Web App URL here (see setup guide)
+    GOOGLE_SHEET_WEBHOOK: "https://script.google.com/macros/s/AKfycbyzCBBOzWr0RGYJYmGIqL1tT3qQpQWD_ozHpigASdiKE5Az_jeizzgopnlmZZjvHaiC/exec",
+
+    // Your WhatsApp community invite link
+    WHATSAPP_LINK: "https://chat.whatsapp.com/LA5CQJbMczH3QGhSyJDPGK"
+  };
+  /* ========================================================= */
+
+  let formData = {};
+
+  // Step navigation
+  function goToStep(n){
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + n).classList.add('active');
+    document.querySelectorAll('.step-pill').forEach((p,i) => {
+      p.classList.remove('active','done');
+      if (i+1 < n) p.classList.add('done');
+      if (i+1 === n) p.classList.add('active');
+    });
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  // ---- Page 1 validation ----
+  const form = document.getElementById('registration-form');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      formData = {
+        name: document.getElementById('name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        college: document.getElementById('college').value.trim(),
+        year: document.getElementById('year').value,
+        branch: document.getElementById('branch').value,
+        timestamp: new Date().toISOString()
+      };
+      goToStep(2);
+    }
+  });
+
+  function validateForm(){
+    let valid = true;
+    const fields = ['name','email','phone','college','year','branch'];
+    fields.forEach(id => {
+      const el = document.getElementById(id);
+      const wrap = el.closest('.field');
+      wrap.classList.remove('show-err');
+      el.classList.remove('error');
+      const val = el.value.trim();
+      let ok = val.length > 0;
+      if (id === 'email') ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+      if (id === 'phone') ok = /^[6-9]\d{9}$/.test(val.replace(/\s|-/g,''));
+      if (!ok){
+        wrap.classList.add('show-err');
+        el.classList.add('error');
+        valid = false;
+      }
+    });
+    return valid;
+  }
+
+  // Live-clear errors
+  document.querySelectorAll('#registration-form input, #registration-form select').forEach(el => {
+    el.addEventListener('input', () => {
+      el.classList.remove('error');
+      el.closest('.field').classList.remove('show-err');
+    });
+  });
+
+  // ---- Page 2 checkbox ----
+  const accept = document.getElementById('accept');
+  const acceptBtn = document.getElementById('accept-btn');
+  accept.addEventListener('change', () => {
+    acceptBtn.disabled = !accept.checked;
+  });
+
+  // ---- Submit to Google Sheet + redirect ----
+  async function submitAndJoin(){
+    acceptBtn.disabled = true;
+    acceptBtn.innerHTML = 'Submitting… <span class="arrow">⏳</span>';
+
+    // Submit to Google Sheets (fire-and-forget — no-cors mode avoids CORS issues)
+    if (CONFIG.GOOGLE_SHEET_WEBHOOK && !CONFIG.GOOGLE_SHEET_WEBHOOK.includes("PASTE")) {
+      try {
+        await fetch(CONFIG.GOOGLE_SHEET_WEBHOOK, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData)
+        });
+      } catch(err){ console.warn("Sheet submit failed:", err); }
+    }
+
+    // Go to page 3
+    document.getElementById('whatsapp-link').href = CONFIG.WHATSAPP_LINK;
+    goToStep(3);
+  }
+</script>
+</body>
+</html>
